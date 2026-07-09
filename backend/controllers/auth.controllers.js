@@ -6,8 +6,8 @@ import genToken from "../utils/token.js"
 export const signUp = async (req,res) => {
     try {
         const {fullName,email,password,mobile,role} = req.body
-        const user = await User.findOne({email})
-        if (user) {
+        const existUser = await User.findOne({email})
+        if (existUser) {
             return res.status(400).json({message:"User Already Exist."})
         }
         if (password.length < 6) {
@@ -17,7 +17,7 @@ export const signUp = async (req,res) => {
             return res.status(400).json({message:"Mobile Number at least 10 digits."})
         }
         const hashedPassword = await bcrypt.hash(password,10)
-         user = await User.create({
+       const  user = await User.create({
         fullName,
         email,
         password:hashedPassword,

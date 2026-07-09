@@ -3,6 +3,9 @@ import { Route, Routes } from 'react-router-dom'
 import SingUp from './pages/SingUp'
 import SignIn from './pages/SignIn'
 
+
+export const ServerUrl =  "http://localhost:8000" 
+
 const App = () => {
   return (
     <div>
