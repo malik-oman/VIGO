@@ -22,7 +22,17 @@ role:{
     type:String,
     enum:["user","owner","deliveryBoy"],
     required:true
-}
+},
+resetOtp:{
+    type:String
+},
+isOtpVerified:{
+    type:Boolean,
+    default:false
+},
+otpExpires:{
+    type:Date
+},
 
 },{timestamps:true})
 
