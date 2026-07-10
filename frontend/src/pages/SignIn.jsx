@@ -7,6 +7,8 @@ import { HiOutlineHome } from "react-icons/hi2";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { ServerUrl } from '../App';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 const SingIn = () => {
 
@@ -30,6 +32,20 @@ const SingIn = () => {
       console.log(error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleGoogleAuth = async () => {
+ 
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(auth,provider)
+    try {
+      const {data} = await axios.post(`${ServerUrl}/api/auth/google-auth`,{
+        email:result.user.email,
+       
+      },{withCredentials:true})
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -120,6 +136,7 @@ const SingIn = () => {
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
               <input
                 id="email"
+                required
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 type="email"
@@ -136,6 +153,7 @@ const SingIn = () => {
               <div className="relative">
                 <input
                   id="password"
+                  required
                   onChange={(e) => setPassword(e.target.value)}
                   value={password}
                   type={showPassword ? "text" : "password"}
@@ -187,6 +205,7 @@ const SingIn = () => {
             {/* GOOGLE */}
             <button
               type="button"
+              onClick={handleGoogleAuth}
               className="w-full flex items-center justify-center gap-2.5 rounded-xl border
                 border-gray-200 bg-white px-4 py-3.5 text-[15px] font-semibold text-gray-700
                 transition-all duration-300 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm cursor-pointer"

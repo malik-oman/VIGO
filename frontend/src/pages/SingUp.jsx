@@ -4,9 +4,12 @@ import { FcGoogle } from "react-icons/fc";
 import { IoFastFoodOutline } from "react-icons/io5";
 import { TbMotorbike } from "react-icons/tb";
 import { HiOutlineHome } from "react-icons/hi2";
+import { MdErrorOutline } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { ServerUrl } from '../App';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 const SingUp = () => {
 
@@ -19,6 +22,7 @@ const SingUp = () => {
   const [password, setPassword] = useState("")
   const [mobile, setMobile] = useState("")
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState({})
 
   const roles = [
     { key: "user", label: "Customer", icon: HiOutlineHome },
@@ -26,8 +30,63 @@ const SingUp = () => {
     { key: "deliveryBoy", label: "Rider", icon: TbMotorbike },
   ]
 
+  // VALIDATION ======================================================
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!fullName.trim()) {
+      newErrors.fullName = "Full name is required"
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "Enter a valid email address"
+    }
+
+    if (!mobile.trim()) {
+      newErrors.mobile = "Mobile number is required"
+    } else if (!/^\d{10,}$/.test(mobile)) {
+      newErrors.mobile = "Mobile number must be at least 10 digits"
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required"
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  // small helper to clear a single field's error as the user types
+  const clearError = (field) => {
+    if (errors[field]) {
+      setErrors((prev) => {
+        const copy = { ...prev }
+        delete copy[field]
+        return copy
+      })
+    }
+  }
+
+  // reusable, polished inline error message
+  const FieldError = ({ message }) => {
+    if (!message) return null
+    return (
+      <p className="flex items-center gap-1.5 mt-1.5 text-[12.5px] font-medium text-red-500 animate-[fadeIn_0.2s_ease-in-out]">
+        <MdErrorOutline size={14} className="shrink-0" />
+        {message}
+      </p>
+    )
+  }
+
   // SIGNUP CONTROLLER==============================================
   const handleSignUp = async () => {
+    if (!validateForm()) return
+
     try {
       setLoading(true)
       const result = await axios.post(`${ServerUrl}/api/auth/signup`, {
@@ -38,6 +97,24 @@ const SingUp = () => {
       console.log(error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleGoogleAuth = async () => {
+    if (!mobile) {
+      return alert("Mobile Number is Required")
+    }
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(auth,provider)
+    try {
+      const {data} = await axios.post(`${ServerUrl}/api/auth/google-auth`,{
+        fullName:result.user.displayName,
+        email:result.user.email,
+        role,
+        mobile
+      },{withCredentials:true})
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -128,14 +205,15 @@ const SingUp = () => {
               <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-1.5">Full name</label>
               <input
                 id="fullName"
-                onChange={(e) => setFullName(e.target.value)}
+                onChange={(e) => { setFullName(e.target.value); clearError("fullName") }}
                 value={fullName}
                 type="text"
                 placeholder="Jordan Lee"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-[15px]
+                className={`w-full rounded-xl border ${errors.fullName ? "border-red-400 bg-red-50/40 focus:ring-red-100 focus:border-red-400" : "border-gray-200 bg-gray-50/50 focus:border-[#ff4d2d] focus:ring-[#ff4d2d]/10"} px-4 py-3.5 text-[15px]
                   text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-300
-                  focus:bg-white focus:border-[#ff4d2d] focus:ring-4 focus:ring-[#ff4d2d]/10 hover:border-gray-300"
+                  focus:bg-white focus:ring-4 hover:border-gray-300`}
               />
+              <FieldError message={errors.fullName} />
             </div>
 
             {/* EMAIL */}
@@ -143,14 +221,15 @@ const SingUp = () => {
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
               <input
                 id="email"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); clearError("email") }}
                 value={email}
                 type="email"
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-[15px]
+                className={`w-full rounded-xl border ${errors.email ? "border-red-400 bg-red-50/40 focus:ring-red-100 focus:border-red-400" : "border-gray-200 bg-gray-50/50 focus:border-[#ff4d2d] focus:ring-[#ff4d2d]/10"} px-4 py-3.5 text-[15px]
                   text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-300
-                  focus:bg-white focus:border-[#ff4d2d] focus:ring-4 focus:ring-[#ff4d2d]/10 hover:border-gray-300"
+                  focus:bg-white focus:ring-4 hover:border-gray-300`}
               />
+              <FieldError message={errors.email} />
             </div>
 
             {/* MOBILE */}
@@ -158,14 +237,15 @@ const SingUp = () => {
               <label htmlFor="mobile" className="block text-sm font-semibold text-gray-700 mb-1.5">Mobile number</label>
               <input
                 id="mobile"
-                onChange={(e) => setMobile(e.target.value)}
+                onChange={(e) => { setMobile(e.target.value); clearError("mobile") }}
                 value={mobile}
                 type="tel"
                 placeholder="+1 (555) 000-0000"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 text-[15px]
+                className={`w-full rounded-xl border ${errors.mobile ? "border-red-400 bg-red-50/40 focus:ring-red-100 focus:border-red-400" : "border-gray-200 bg-gray-50/50 focus:border-[#ff4d2d] focus:ring-[#ff4d2d]/10"} px-4 py-3.5 text-[15px]
                   text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-300
-                  focus:bg-white focus:border-[#ff4d2d] focus:ring-4 focus:ring-[#ff4d2d]/10 hover:border-gray-300"
+                  focus:bg-white focus:ring-4 hover:border-gray-300`}
               />
+              <FieldError message={errors.mobile} />
             </div>
 
             {/* PASSWORD */}
@@ -174,13 +254,13 @@ const SingUp = () => {
               <div className="relative">
                 <input
                   id="password"
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); clearError("password") }}
                   value={password}
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5 pr-12 text-[15px]
+                  className={`w-full rounded-xl border ${errors.password ? "border-red-400 bg-red-50/40 focus:ring-red-100 focus:border-red-400" : "border-gray-200 bg-gray-50/50 focus:border-[#ff4d2d] focus:ring-[#ff4d2d]/10"} px-4 py-3.5 pr-12 text-[15px]
                     text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-300
-                    focus:bg-white focus:border-[#ff4d2d] focus:ring-4 focus:ring-[#ff4d2d]/10 hover:border-gray-300"
+                    focus:bg-white focus:ring-4 hover:border-gray-300`}
                 />
                 <button
                   type="button"
@@ -190,6 +270,7 @@ const SingUp = () => {
                   {showPassword ? <FaEye size={18} /> : <FaRegEyeSlash size={18} />}
                 </button>
               </div>
+              <FieldError message={errors.password} />
             </div>
 
             {/* ROLE */}
@@ -241,6 +322,7 @@ const SingUp = () => {
             {/* GOOGLE */}
             <button
               type="button"
+              onClick={handleGoogleAuth}
               className="w-full flex items-center justify-center gap-2.5 rounded-xl border
                 border-gray-200 bg-white px-4 py-3.5 text-[15px] font-semibold text-gray-700
                 transition-all duration-300 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm cursor-pointer"
