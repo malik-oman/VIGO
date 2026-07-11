@@ -10,10 +10,14 @@ import axios from 'axios'
 import { ServerUrl } from '../App';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase';
+import {  useDispatch } from 'react-redux'
+import { setUserData } from '../redux/userSlice';
+
 
 const SingUp = () => {
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const [showPassword, setShowPassword] = useState(false)
   const [role, setRole] = useState("user")
@@ -92,7 +96,7 @@ const SingUp = () => {
       const result = await axios.post(`${ServerUrl}/api/auth/signup`, {
         fullName, email, password, mobile, role
       }, { withCredentials: true })
-
+      dispatch(setUserData(result.data))
     } catch (error) {
       console.log(error)
     } finally {
@@ -113,6 +117,7 @@ const SingUp = () => {
         role,
         mobile
       },{withCredentials:true})
+      dispatch(setUserData(data))
     } catch (error) {
       console.log(error)
     }

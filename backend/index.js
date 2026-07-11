@@ -5,6 +5,7 @@ import cors from 'cors'
 import { connectDb } from './config/db.js'
 import cookieParser from 'cookie-parser'
 import authRouter from './routes/auth.routes.js'
+import userRouter from './routes/user.routes.js'
 
 
 
@@ -23,6 +24,7 @@ app.use(cors({
 
 // ============================API END POINTS==========================================
 app.use("/api/auth",authRouter)
+app.use("/api/user",userRouter)
 
 // ==============================================================================
 const port = process.env.PORT
