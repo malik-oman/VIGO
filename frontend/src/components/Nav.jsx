@@ -10,7 +10,8 @@ import { FaPlus } from 'react-icons/fa';
 import { TbReceipt2 } from 'react-icons/tb';
 
 const Nav = () => {
-  const { userData, city } = useSelector((state) => state.user);
+  const { userData, currentCity } = useSelector((state) => state.user);
+  const { myShopData } = useSelector((state) => state.owner);
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
@@ -73,7 +74,7 @@ const Nav = () => {
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Location</span>
-                <span className="text-sm font-semibold text-gray-700 truncate max-w-[100px]">{city}</span>
+                <span className="text-sm font-semibold text-gray-700 truncate max-w-[100px]">{currentCity}</span>
               </div>
             </div>
             <div className="flex-1 flex items-center gap-3 px-4">
@@ -111,14 +112,14 @@ const Nav = () => {
           {userData?.role === "owner" && (
             <>
               {/* Add Food Item CTA */}
-              <motion.button 
+          { myShopData &&  <motion.button 
                 whileHover={{ scale: 1.03, boxShadow: "0 10px 25px -5px rgba(255, 77, 45, 0.3)" }}
                 whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-2 bg-gradient-to-r from-[#ff4d2d] to-[#ff6b4f] text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg shadow-orange-500/20 cursor-pointer"
               >
                 <FaPlus size={14} />
                 <span className="hidden sm:inline text-sm font-semibold">Add Food Item</span>
-              </motion.button>
+              </motion.button>}
 
               {/* Owner Orders Badge */}
               <button className="relative flex items-center gap-2 bg-white border border-gray-200 px-3 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
@@ -164,7 +165,7 @@ const Nav = () => {
             <div className="flex items-center h-[56px]">
               <div className="flex items-center gap-2 px-3 border-r border-gray-100 min-w-[100px]">
                 <MapPin size={16} className="text-[#ff4d2d]" strokeWidth={2.5} />
-                <span className="text-xs font-semibold text-gray-700 truncate">{city}</span>
+                <span className="text-xs font-semibold text-gray-700 truncate">{currentCity}</span>
               </div>
               <div className="flex-1 flex items-center gap-2 px-3">
                 <Search size={18} className="text-[#ff4d2d]" strokeWidth={2.5} />

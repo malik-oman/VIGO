@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import axios from 'axios'
 import {useDispatch, useSelector } from 'react-redux'
-import { setCity } from '../redux/userSlice'
+import { setAddress, setCity, setState } from '../redux/userSlice'
 
 
 
@@ -22,6 +22,8 @@ useEffect(() => {
       const cityName = location?.city || location?.county || location?.state || location?.formatted
   
       dispatch(setCity(cityName))
+      dispatch(setState(result?.data.results[0].state))
+      dispatch(setAddress(result?.data.results[0].address))
     }, (error) => {
       console.log("Geolocation error:", error)
     })
