@@ -24,7 +24,7 @@ export const createEditShop = async (req,res) => {
          shop = await Shop.findByIdAndUpdate(shop._id, updateData,{new:true})
         }
      
-        await shop.populate("owner")
+        await shop.populate("owner item")
         return res.status(200).json(shop)
     } catch (error) {
       

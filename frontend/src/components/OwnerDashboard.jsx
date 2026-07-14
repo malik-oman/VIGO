@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { FaUtensils, FaStore, FaChartLine, FaUsers, FaPen } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import OwnerItemCard from './OwnerItemCard'
 
 const OwnerDashboard = () => {
   const navigate = useNavigate()
@@ -150,7 +151,15 @@ const OwnerDashboard = () => {
         </motion.div>
       )}
       
-    </div>}   
+    </div>}
+
+
+    {myShopData.item.length>0 && <div className='flex flex-col items-center gap-4
+    w-full max-w-3xl'>
+      {myShopData.item.map((itm,index)=>(
+        <OwnerItemCard data={itm} key={index}/>
+      ))}
+      </div>}   
     </div>
   )
 }

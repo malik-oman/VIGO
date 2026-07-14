@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import UseGetCity from './hooks/UseGetCity'
 import useGetMyShop from './hooks/useGetMyShop'
 import CreateEditShop from './pages/CreateEditShop'
+import AddItem from './pages/AddItem'
 
 
 
@@ -33,6 +34,8 @@ useGetMyShop()
     <Route path='/' element={userData ? <Home/> : <Navigate to={"/signin"}/>}/>
     <Route path='/create-edit-shop' 
     element={userData ? <CreateEditShop/> : <Navigate to={"/signin"}/>}/>
+    <Route path='/add-food' 
+    element={userData ? <AddItem/> : <Navigate to={"/signin"}/>}/>
   </Routes>
     </div>
   )
