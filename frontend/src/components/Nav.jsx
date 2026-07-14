@@ -8,11 +8,13 @@ import { setUserData } from '../redux/userSlice';
 import { Search, X, ShoppingCart, MapPin, LogOut, Package } from 'lucide-react';
 import { FaPlus } from 'react-icons/fa';
 import { TbReceipt2 } from 'react-icons/tb';
+import { useNavigate } from 'react-router-dom';
 
 const Nav = () => {
   const { userData, currentCity } = useSelector((state) => state.user);
   const { myShopData } = useSelector((state) => state.owner);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const handleLogout = async () => {
     try {
@@ -113,6 +115,7 @@ const Nav = () => {
             <>
               {/* Add Food Item CTA */}
           { myShopData &&  <motion.button 
+          onClick={()=>navigate("/add-food")}
                 whileHover={{ scale: 1.03, boxShadow: "0 10px 25px -5px rgba(255, 77, 45, 0.3)" }}
                 whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-2 bg-gradient-to-r from-[#ff4d2d] to-[#ff6b4f] text-white pl-3 pr-4 py-2.5 rounded-full shadow-lg shadow-orange-500/20 cursor-pointer"

@@ -1,7 +1,7 @@
 import React from 'react'
 import Nav from './Nav'
 import { useSelector } from 'react-redux'
-import { FaUtensils, FaStore, FaChartLine, FaClipboardList, FaStar, FaUsers } from 'react-icons/fa'
+import { FaUtensils, FaStore, FaChartLine, FaUsers, FaPen } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
@@ -9,41 +9,11 @@ const OwnerDashboard = () => {
   const navigate = useNavigate()
   const { myShopData } = useSelector(state => state.owner)
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.4 }
-    }
-  }
-
-  // Stats cards data
-  const statsData = [
-    { icon: FaChartLine, label: 'Total Orders', value: '0', color: 'from-blue-500 to-blue-600' },
-    { icon: FaUsers, label: 'Customers', value: '0', color: 'from-purple-500 to-purple-600' },
-    { icon: FaStar, label: 'Rating', value: '0.0', color: 'from-yellow-500 to-yellow-600' },
-    { icon: FaClipboardList, label: 'Menu Items', value: '0', color: 'from-green-500 to-green-600' },
-  ]
-
   return (
     <div className='w-full min-h-screen bg-gradient-to-br from-[#fff9f6] via-white to-[#fff5f0]'>
       <Nav />
 
-      {!myShopData ? (
+      {!myShopData &&
         // Add Restaurant Section
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -121,70 +91,66 @@ const OwnerDashboard = () => {
             </div>
           </div>
         </motion.div>
-      ) : (
-        // Dashboard View when restaurant exists
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12'
+      }
+
+  {/* ==================================== SHOP DATA ============================ */}
+      {myShopData && 
+      <div className='w-full flex flex-col items-center gap-8 px-4 sm:px-6 pt-8'>
+  
+      {/* ======= SHOP HEADER ======= */}
+      <h1 className='text-2xl sm:text-3xl text-gray-900 flex items-center gap-3 text-center font-bold'>
+        <FaUtensils className='text-[#ff4d2d] w-10 h-10 sm:w-12 sm:h-12' />
+        Welcome to {myShopData.name}
+      </h1> 
+    
+      {/* ======= SHOP IMAGE CARD ======= */}
+      <div className='bg-white shadow-lg rounded-2xl overflow-hidden border border-orange-100 hover:shadow-xl transition-all duration-300 w-full max-w-3xl relative group'>
+        <button 
+          onClick={()=>navigate("/create-edit-shop")}
+          className='absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm text-[#ff4d2d] p-2.5 rounded-full shadow-md hover:bg-[#ff4d2d] hover:text-white transition-all duration-200 cursor-pointer'
         >
-          {/* Welcome Section */}
-          <motion.div variants={itemVariants} className='mb-8'>
-            <h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800'>
-              Welcome back, <span className='bg-gradient-to-r from-[#ff4d2d] to-[#ff6b4a] bg-clip-text text-transparent'>
-                {myShopData?.name || 'Owner'}!
-              </span>
-            </h1>
-            <p className='text-gray-500 mt-2 text-sm sm:text-base'>
-              Here's what's happening with your restaurant today
-            </p>
-          </motion.div>
-
-          {/* Stats Grid */}
-          <motion.div variants={itemVariants} className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8'>
-            {statsData.map((stat, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className={`bg-gradient-to-br ${stat.color} rounded-2xl p-5 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
-              >
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-xs sm:text-sm opacity-80 font-medium'>{stat.label}</p>
-                    <p className='text-2xl sm:text-3xl font-bold mt-1'>{stat.value}</p>
-                  </div>
-                  <stat.icon className='w-8 h-8 sm:w-10 sm:h-10 opacity-60' />
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Quick Actions */}
-          <motion.div variants={itemVariants}>
-            <h2 className='text-lg sm:text-xl font-semibold text-gray-700 mb-4'>Quick Actions</h2>
-            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4'>
-              {[
-                { label: 'Edit Menu', icon: FaUtensils, color: 'from-blue-400 to-blue-500', action: '/create-edit-shop' },
-                { label: 'View Orders', icon: FaClipboardList, color: 'from-green-400 to-green-500', action: '/orders' },
-                { label: 'Analytics', icon: FaChartLine, color: 'from-purple-400 to-purple-500', action: '/analytics' },
-                { label: 'Manage Shop', icon: FaStore, color: 'from-orange-400 to-orange-500', action: '/create-edit-shop' },
-              ].map((item, index) => (
-                <motion.button
-                  key={index}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate(item.action)}
-                  className={`bg-gradient-to-br ${item.color} p-4 sm:p-5 rounded-xl text-white shadow-md hover:shadow-lg transition-all duration-300 text-center`}
-                >
-                  <item.icon className='w-6 h-6 sm:w-7 sm:h-7 mx-auto mb-2' />
-                  <span className='text-xs sm:text-sm font-medium'>{item.label}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
+          <FaPen size={16}/>
+        </button>
+        <img src={myShopData.image} alt={myShopData.name} className='w-full h-52 sm:h-64 object-cover' />
+        <div className='p-5 sm:p-6'>
+          <h2 className='text-xl sm:text-2xl font-bold text-gray-800 mb-1'>{myShopData.name}</h2>
+          <p className='text-gray-500 text-sm font-medium'>{myShopData.city}, {myShopData.state}</p>
+          <p className='text-gray-400 text-sm mt-1'>{myShopData.address}</p>
+        </div>
+      </div>
+      
+      {/* ======= EMPTY STATE (ADD FOOD) ======= */}
+      {myShopData.item.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className='w-full max-w-md bg-white rounded-3xl shadow-xl border border-orange-100 p-8 sm:p-12 text-center'
+        >
+          <div className='w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#ff4d2d] to-[#ff6b4a] rounded-full flex items-center justify-center shadow-lg shadow-orange-200'>
+            <FaUtensils className='text-white w-10 h-10' />
+          </div>
+    
+          <h2 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-3'>
+            Add Your First Item
+          </h2>
+          
+          <p className='text-gray-500 mb-8 leading-relaxed text-sm sm:text-base'>
+            Share your delicious creations with thousands of hungry customers.
+          </p>
+    
+          <motion.button
+            whileHover={{ scale: 1.03, boxShadow: "0 15px 30px -10px rgba(255, 77, 45, 0.4)" }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate("/add-food")}
+            className='w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#ff4d2d] to-[#ff6b4a] text-white rounded-full font-semibold shadow-lg shadow-[#ff4d2d]/25 cursor-pointer'
+          >
+            Add Food Item
+          </motion.button>
         </motion.div>
       )}
+      
+    </div>}   
     </div>
   )
 }
