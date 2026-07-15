@@ -124,14 +124,7 @@ const Nav = () => {
                 <span className="hidden sm:inline text-sm font-semibold">Add Food Item</span>
               </motion.button>}
 
-              {/* Owner Orders Badge */}
-              <button className="relative flex items-center gap-2 bg-white border border-gray-200 px-3 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                <TbReceipt2 size={20} className="text-[#ff4d2d]" />
-                <span className="hidden sm:inline text-sm font-semibold text-gray-700">My Orders</span>
-                <span className="absolute -top-2 -right-2 min-w-[20px] h-5 flex items-center justify-center text-[10px] font-bold text-white bg-[#ff4d2d] rounded-full px-1 shadow-sm">
-                  0
-                </span>
-              </button>
+             
             </>
           )}
 
@@ -199,10 +192,10 @@ const Nav = () => {
             </div>
 
             <div className="py-1">
-              <button className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 rounded-xl flex items-center gap-3 hover:bg-[#ff4d2d]/5 hover:text-[#ff4d2d] transition-colors">
+             {userData.role == "user" && <button className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 rounded-xl flex items-center gap-3 hover:bg-[#ff4d2d]/5 hover:text-[#ff4d2d] transition-colors">
                 <Package size={16} strokeWidth={2} />
                 My Orders
-              </button>
+              </button>}
 
               <button
                 onClick={handleLogout}

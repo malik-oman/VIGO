@@ -67,3 +67,21 @@ export const getItemById = async (req,res) => {
         return res.status(500).json({message:`GET Item Error ${error}`})
     }
 }
+
+
+export const deleteItem = async (req,res) => {
+   try {
+    const  itemId = req.params.itemId
+    const item = await Item.findByIdAndDelete(itemId)
+    if(!item){
+        return res.status(400).json({message:"item not found"}) 
+       }
+       const shop = await Shop.findOne({owner:req.userId})
+       shop.item = shop.item.filter(i=>i!==item._id)
+       await shop.save()
+     await   shop.populate("item")
+       return res.status(200).json(shop)
+   } catch (error) {
+    return res.status(500).json({message:`Delete Item Error ${error}`})
+   } 
+}
