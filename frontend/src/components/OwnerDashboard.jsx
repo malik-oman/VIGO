@@ -154,8 +154,8 @@ const OwnerDashboard = () => {
     </div>}
 
 
-    {myShopData.item.length>0 && <div className='flex flex-col items-center gap-4
-    w-full max-w-3xl'>
+    {myShopData && myShopData.item.length>0 && <div className='flex flex-col items-center gap-4
+    w-full max-w-3xl mx-auto mt-9'>
       {myShopData.item.map((itm,index)=>(
         <OwnerItemCard data={itm} key={index}/>
       ))}
